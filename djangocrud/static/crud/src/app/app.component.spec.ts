@@ -1,29 +1,30 @@
-import { TestBed } from '@angular/core/testing';
-import { AppComponent } from './app.component';
+import { Component } from '@angular/core';
+import { ApiService } from './api.service';
 
-describe('AppComponent', () => {
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [AppComponent],
-    }).compileComponents();
-  });
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css'],
+  standalone: true,  // Añadir esta línea
+  providers: [ApiService]
+})
+export class AppComponent {
+  title = 'My Angular App';
+  movies = [{id:1,title:'peli1',year:2021},{id:2,title:'peli2',year:2022}];
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
-  });
+  constructor(private api: ApiService) {
+    this.getMovies();
+  }
 
-  it(`should have the 'crud' title`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('crud');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, crud');
-  });
-});
+  getMovies = () => {
+    this.api.getAllMovies().subscribe(
+      data => {
+        console.log(data);
+        // this.movies = data; // data.results;
+      },
+      error => {
+        console.log(error);
+      }
+    );
+  }
+}
